@@ -75,7 +75,6 @@
             transition: 0.3s;
         }
 
-        /* Стиль для повідомлення про помилку з анімацією зникнення */
         .error-msg {
             background: #fff5f5;
             color: #e03131;
@@ -88,7 +87,7 @@
             align-items: center;
             justify-content: center;
             gap: 8px;
-            transition: opacity 0.5s ease; /* Плавне зникнення */
+            transition: opacity 0.5s ease;
         }
 
         @media (max-width: 480px) {
@@ -123,10 +122,8 @@
     window.onload = function() {
         const errorAlert = document.getElementById('error-alert');
         if (errorAlert) {
-            // Зачекати 3 секунди (3000 мс), потім почати зникати
             setTimeout(() => {
                 errorAlert.style.opacity = '0';
-                // Повністю видалити елемент через 0.5с після початку зникання
                 setTimeout(() => {
                     errorAlert.style.display = 'none';
                 }, 500);
