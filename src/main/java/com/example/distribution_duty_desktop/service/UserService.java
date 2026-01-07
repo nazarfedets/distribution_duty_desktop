@@ -26,4 +26,10 @@ public class UserService {
     public void save(User user) {
         userRepository.save(user);
     }
+
+    public List<User> findByGroupName(String groupName) {
+        return userRepository.findAll().stream()
+                .filter(u -> groupName.equals(u.getGroupName()))
+                .toList();
+    }
 }

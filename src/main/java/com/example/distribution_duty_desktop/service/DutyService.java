@@ -14,15 +14,21 @@ public class DutyService {
         this.dutyRepository = dutyRepository;
     }
 
+    public long countAllDuties() {
+        return dutyRepository.count();
+    }
+
+    public long countExtraDuties() {
+        return dutyRepository.findAll().stream()
+                .filter(d -> "Позачергово".equals(d.getPlace())) // Фільтруємо ДО підрахунку
+                .count();
+    }
+
     public void addDuty(Duty duty) {
         dutyRepository.save(duty);
     }
 
-    public List<Duty> getDutiesMonth(int year, int month, String place) {
+    public List<Duty> getDutiesMonth(int year, int month) {
         return dutyRepository.findByYearAndMonth(year, month);
-    }
-
-    public void deleteDuties(int year, int month, String place) {
-        dutyRepository.deleteByYearAndMonthAndPlace(year, month, place);
     }
 }

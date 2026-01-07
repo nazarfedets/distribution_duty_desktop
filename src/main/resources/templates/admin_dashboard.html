@@ -1,9 +1,122 @@
 <!DOCTYPE html>
-<html>
-<head><title>Admin Dashboard</title></head>
-<body>
-<h1>Панель Адміністратора</h1>
-<p>Вітаємо, Адмін!</p>
-<a href="/logout">Вийти</a>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <title>DutyDistribute | ЛДУБЖД</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="/css/admin_style.css">
+</head>
+<body class="is-admin">
+
+<header>
+    <div class="logo"><i class="bi bi-shield-check"></i> Duty<span>Distribute</span></div>
+    <div style="display: flex; align-items: center; gap: 20px;">
+        <button class="btn btn-outline" id="role-toggle-btn">
+            <i class="bi bi-person-badge"></i> <span id="role-text">До курсанта</span>
+        </button>
+        <div style="text-align: right;">
+            <div style="font-weight: 700;" id="user-name" th:text="${adminName}">Адмін</div>
+        </div>
+        <a href="/logout" class="btn btn-outline"><i class="bi bi-box-arrow-right"></i></a>
+    </div>
+</header>
+
+<aside>
+    <div class="admin-only">
+        <div class="menu-label">Адміністрування</div>
+        <div class="nav-item active" id="nav-dash" onclick="showSection('dashboard-admin')">
+            <i class="bi bi-speedometer2"></i> Dashboard
+        </div>
+        <div class="nav-item" id="nav-manage" onclick="showSection('manage-duties')">
+            <i class="bi bi-grid-3x3-gap"></i> Керування нарядами
+        </div>
+    </div>
+</aside>
+
+<main>
+    <section id="dashboard-admin" class="page-section admin-only">
+        <h2>Статистика підрозділу</h2>
+        <div class="stats-grid">
+            <div class="card"><h3>Всього нарядів</h3><span id="stat-total" class="stat-value">0</span></div>
+            <div class="card"><h3>Позачергові (Ш)</h3><span id="stat-extra" class="stat-value text-danger">0</span></div>
+            <div class="card"><h3>Курсантів</h3><span id="stat-users" class="stat-value">0</span></div>
+        </div>
+    </section>
+
+    <section id="manage-duties" class="page-section admin-only" style="display:none;">
+        <div class="toolbar">
+            <div class="controls" style="display: flex; flex-wrap: wrap; gap: 10px; align-items: flex-end;">
+                <div>
+                    <label style="font-size: 0.8rem; display: block; margin-bottom: 4px;">Група:</label>
+                    <select id="group-select" class="btn btn-outline" onchange="loadTableData()">
+                        <option value="">-- Виберіть групу --</option>
+                    </select>
+                </div>
+                <div>
+                    <label style="font-size: 0.8rem; display: block; margin-bottom: 4px;">Місяць:</label>
+                    <input type="month" id="month-select" value="2026-01" class="btn btn-outline" onchange="loadTableData()">
+                </div>
+                <div>
+                    <label style="font-size: 0.8rem; display: block; margin-bottom: 4px;">Заг. ліміт:</label>
+                    <input type="number" id="global-limit" value="4" class="btn btn-outline" style="width: 70px;">
+                </div>
+                <button class="btn btn-primary" onclick="autoDistribute()"><i class="bi bi-magic"></i> Авторозподіл</button>
+                <button class="btn btn-outline" onclick="openLimitModal()"><i class="bi bi-person-gear"></i> Ліміти</button>
+                <button class="btn btn-outline" style="color: var(--danger);" onclick="clearMonthData()">
+                    <i class="bi bi-trash"></i> Очистити
+                </button>
+            </div>
+        </div>
+
+        <div class="excel-wrapper" style="margin-top: 20px;">
+            <table class="excel-table">
+                <thead>
+                <tr id="excel-head">
+                    <th>ПІБ Курсанта & Ліміт</th>
+                    <th>∑</th>
+                </tr>
+                </thead>
+                <tbody id="excel-body"></tbody>
+            </table>
+        </div>
+    </section>
+</main>
+
+<div id="ctx-menu">
+    <div class="ctx-item" onclick="applyStatus('П')">Призначити (П)</div>
+    <div class="ctx-item" onclick="applyStatus('Ш')" style="color: var(--danger);">Штрафний (Ш)</div>
+    <div class="ctx-item" onclick="applyStatus('З')" style="color: gray;">Звільнити (З)</div>
+    <div class="ctx-item" onclick="promptCustomStatus()"><i class="bi bi-pencil-square"></i> Власний статус...</div>
+    <hr>
+    <div class="ctx-item" onclick="applyStatus('')">Очистити клітинку</div>
+</div>
+
+<div id="limit-modal" class="modal-overlay">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>Ліміти нарядів</h3>
+            <button class="close-btn" onclick="closeLimitModal()">&times;</button>
+        </div>
+        <div class="modal-body">
+            <div class="form-group">
+                <label>Курсант:</label>
+                <select id="student-limit-select" class="form-control">
+                    <option value="">-- Оберіть курсанта --</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Ліміт на місяць (-1 = без обмежень):</label>
+                <input type="number" id="limit-value" class="form-control" min="-1" value="-1">
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-outline" onclick="closeLimitModal()">Скасувати</button>
+            <button class="btn btn-primary" onclick="saveStudentLimit()">Зберегти</button>
+        </div>
+    </div>
+</div>
+
+<script src="/js/admin_script.js"></script>
 </body>
 </html>

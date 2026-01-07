@@ -20,6 +20,9 @@ public class User {
     @Column(name = "group_name")
     private String groupName;
 
+    @Column(name = "duty_limit")
+    private Integer dutyLimit;
+
     public User() {}
 
     public User(String login, String password, String pib, String phone, String course, String groupName, String role) {
